@@ -1,4 +1,17 @@
-./node_modules
-*/dist
-*/.env
-*./node_modules
+# Node dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
