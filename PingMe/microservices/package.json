@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "@nestjs/jwt": "^11.0.2",
+    "@nestjs/microservices": "^11.1.11"
+  },
+  "dependencies": {
+    "@nestjs/config": "^4.0.2"
+  }
+}

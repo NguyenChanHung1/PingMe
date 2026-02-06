@@ -1,0 +1,72 @@
+services:
+  api-gateway:
+    container_name: pingme-api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: ./api-gateway/Dockerfile
+    command: sh -c "npm install && npm run start:dev"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-gateway:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - auth-service
+      - user-service
+
+  auth-service:
+    container_name: pingme-auth-service
+    build:
+      context: ./microservices/auth
+      dockerfile: ./microservices/auth/Dockerfile
+    command: sh -c "npm install && npm run start:dev"
+    ports:
+      - "3010:3000"
+    volumes:
+      - ./microservices/auth:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  user-service:
+    container_name: pingme-user-service
+    build:
+      context: ./microservices/user
+      dockerfile: ./microservices/user/Dockerfile
+    command: sh -c "npm install && npm run start:dev"
+    depends_on:
+      - user-db
+    ports:
+      - "3020:3000"
+    volumes:
+      - ./microservices/user:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  user-db:
+    image: postgres:latest
+    container_name: pingme-user-db
+    restart: always
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pguser
+      POSTGRES_DB: user-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - /data/postgres/user/:/var/lib/postgresql/data/user
+
+  user-pgadmin:
+    image: dpage/pgadmin4
+    container_name: pingme-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com 
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - user-db
